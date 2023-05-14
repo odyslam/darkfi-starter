@@ -1,0 +1,27 @@
+version: '2.1'
+volumes:
+  darkfi:
+  tor:
+services:
+  tor-node:
+    image: odyslam/tor-darkfi
+    restart: always
+    depends_on:
+      - ircd
+      - taud
+    volumes:
+      - tor:/etc/tor
+  ircd:
+    build: odyslam/ircd
+    restart: 'unless-stopped'
+    ports:
+      - "6667:6667"
+    volumes:
+      - darkfi:/config
+  taud:
+    image: odyslam/taud
+    restart: 'unless-stopped'
+    ports:
+      - "23330:23330"
+    volumes:
+      - darkfi:/config
