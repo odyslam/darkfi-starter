@@ -1,21 +1,12 @@
 #!/usr/bin/env bash
 # Create the default config file
-
-_is_sourced() {
-	# https://unix.stackexchange.com/a/215279
-	[ "${#FUNCNAME[@]}" -ge 2 ] \
-		&& [ "${FUNCNAME[0]}" = '_is_sourced' ] \
-		&& [ "${FUNCNAME[1]}" = 'source' ]
-}
-
-_main() {
-  /usr/local/bin/ircd
-  echo "Get shell access into the container with: docker exec -it <container> /bin/bash to edit the config file"
-  echo "\$ vi '~/config/darkfi/ircd_config.toml'"
-  /usr/local/bin/ircd
-}
-
-if ! _is_sourced; then
-	_main "$@"
-fi
-
+rm /var/lib/tor/ircd/hostname
+while [ ! -f /var/lib/tor/ircd/hostname ]
+do
+  echo "Waiting for Tor to start..."
+  sleep 5 # or less like 0.2
+done
+EXTERNAL_ADDR=$(cat /var/lib/tor/ircd/hostname)
+echo "Tor address for ircd: ${EXTERNAL_ADDR}"
+echo "Starting ircd..."
+ircd --external-addr "tor://${EXTERNAL_ADDR}"
