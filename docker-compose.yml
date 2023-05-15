@@ -1,25 +1,23 @@
 version: '2.1'
 volumes:
-  darkfi:
   tor:
 services:
   tor-node:
     build: ./tor
-    restart: always
-    depends_on:
-      - ircd
+    container_name: tor
+    restart: unless-stopped 
     volumes:
       - tor:/var/lib/tor
     ports:
-      - "9050:9050"
       - "25551:25551"
+      - "9050:9050"
   ircd:
     build: ./ircd
-    restart: 'unless-stopped'
+    restart: unless-stopped 
+    env_file:
+      - ircd.env 
+    container_name: ircd
     ports:
       - "6667:6667"
-      - "6697:6697"
-      - "25552:25551"
     volumes:
-      - darkfi:/config
       - tor:/var/lib/tor
