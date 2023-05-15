@@ -4,24 +4,22 @@ volumes:
   tor:
 services:
   tor-node:
-    image: odyslam/tor-darkfi
+    build: ./tor
     restart: always
     depends_on:
       - ircd
-      - taud
     volumes:
-      - tor:/etc/tor
+      - tor:/var/lib/tor
+    ports:
+      - "9050:9050"
+      - "25551:25551"
   ircd:
-    build: odyslam/ircd
+    build: ./ircd
     restart: 'unless-stopped'
     ports:
       - "6667:6667"
+      - "6697:6697"
+      - "25552:25551"
     volumes:
       - darkfi:/config
-  taud:
-    image: odyslam/taud
-    restart: 'unless-stopped'
-    ports:
-      - "23330:23330"
-    volumes:
-      - darkfi:/config
+      - tor:/var/lib/tor

@@ -16,7 +16,7 @@ RUN cp /darkfi/target/"${CARGO_BUILD_TARGET}"/release/taud /darkfi/taud
 FROM rust:alpine as run
 RUN apk update && apk add --no-cache bash vim
 COPY --from=builder /darkfi/taud /usr/local/bin/taud
-COPY ircd_config.toml /root/.config/darkfi/ircd_config.toml
+COPY taud_config.toml /root/.config/darkfi/taud_config.toml
 COPY run.sh /usr/local/bin/run.sh 
 RUN chmod +x /usr/local/bin/run.sh
 ENTRYPOINT /usr/local/bin/run.sh
