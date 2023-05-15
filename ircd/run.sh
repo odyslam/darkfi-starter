@@ -4,9 +4,9 @@ rm /var/lib/tor/ircd/hostname
 while [ ! -f /var/lib/tor/ircd/hostname ]
 do
   echo "Waiting for Tor to start..."
-  sleep 5 # or less like 0.2
+  sleep 15 # or less like 0.2
 done
 EXTERNAL_ADDR=$(cat /var/lib/tor/ircd/hostname)
-echo "Tor address for ircd: ${EXTERNAL_ADDR}"
+echo "Tor address for ircd: tor://${EXTERNAL_ADDR}:25551"
 echo "Starting ircd..."
-ircd --external-addr "tor://${EXTERNAL_ADDR}"
+ircd --external-addr "tor://${EXTERNAL_ADDR}:25551" 

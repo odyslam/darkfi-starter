@@ -2,7 +2,7 @@
 #rpc_listen="tcp://127.0.0.1:25550"
 
 ## IRC listen URL
-#irc_listen="tcp://127.0.0.1:6667"
+irc_listen = "tcp://0.0.0.0:6667"
 #irc_listen="tls://0.0.0.0:6697"
 
 ## TLS certificate path if IRC acceptor uses TLS (optional)
@@ -27,6 +27,7 @@ outbound_connections = 5
 #inbound = ["tls://0.0.0.0:25551"]
 # ipv6 version:
 #inbound = ["tls://[::]:25551"]
+inbound = ["tcp://0.0.0.1:25551"]
 
 ## P2P external addresses
 ## Put your IPs or hostnames here
@@ -43,7 +44,7 @@ outbound_connections = 5
 seeds = ["tls://lilith0.dark.fi:25551", "tls://lilith1.dark.fi:25551"]
 
 # Prefered transports for outbound connections
-outbound_transports = ["tls"]
+outbound_transports = ["tls", "tor"]
 
 ## Only used for debugging. Compromises privacy when set.
 #node_id = "foo"
