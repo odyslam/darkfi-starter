@@ -1,5 +1,0 @@
-HiddenServiceDir /var/lib/tor/ircd/
-HiddenServicePort 25551 127.0.0.1:25552
-
-# HiddenServiceDir /var/lib/tor/taud/
-# HiddenServicePort 23330 127.0.0.1:23330
