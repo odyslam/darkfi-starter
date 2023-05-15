@@ -19,7 +19,6 @@ RUN if [ "${TARGETPLATFORM}" = "linux/amd64" ] ; then CARGO_BUILD_TARGET=x86_64-
 FROM rust:alpine as run
 RUN apk update && apk add --no-cache bash vim
 COPY --from=builder /darkfi/ircd /usr/local/bin/ircd
-RUN mkdir -p /root/.config/darkfi
 COPY ircd_config.toml /root/.config/darkfi/ircd_config.toml
 COPY run.sh /usr/local/bin/run.sh 
 RUN chmod +x /usr/local/bin/run.sh
