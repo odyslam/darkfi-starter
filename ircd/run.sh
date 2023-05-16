@@ -6,8 +6,7 @@ update_contacts() {
     if [[ $name == 'IRCD_CONTACT_'* ]]; then
       contact="${name#IRCD_CONTACT_}"
       echo "Adding contact: ${contact} : ${value}"
-      CONFIG_VAL="[contacts.\"${contact}\"]
-contact_pubkey=\"${value}\""
+      CONFIG_VAL="[contact.\"${contact}\"]\ncontact_pubkey=\"${value}\""
       echo "${CONFIG_VAL}" >> /root/.config/darkfi/ircd_config.toml
     fi
   done
@@ -45,9 +44,10 @@ wait_for_tor(){
       sleep 5 # or less like 0.
   done
 }
+
+wait_for_tor
 setup_tor_hostname
 setup_private_key
 update_contacts
-cat /root/.config/darkfi/ircd_config.toml
 echo "Starting ircd..."
 exec ircd --external-addr "${EXTERNAL_ADDR}"
