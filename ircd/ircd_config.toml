@@ -21,7 +21,7 @@ autojoin = ["#dev", "#memes", "#philosophy", "#markets", "#math", "#random"]
 ## P2P net settings
 [net]
 ## Connection slots
-outbound_connections = 5
+outbound_connections = 20
 
 ## P2P accept addresses
 #inbound = ["tls://0.0.0.0:25551"]
@@ -33,4 +33,4 @@ inbound = ["tcp://0.0.0.0:25551"]
 seeds = ["tls://lilith0.dark.fi:25551", "tls://lilith1.dark.fi:25551"]
 
 # Prefered transports for outbound connections
-outbound_transports = ["tls", "tor"]
+outbound_transports = ["tor"]
