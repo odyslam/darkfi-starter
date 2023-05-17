@@ -1,23 +1,37 @@
 version: '2.1'
 volumes:
   tor:
+  tailscale:
 services:
-  tor-node:
+  tor:
     build: ./tor
     container_name: tor
     restart: unless-stopped 
     volumes:
       - tor:/var/lib/tor
-    ports:
-      - "25551:25551"
-      - "9050:9050"
   ircd:
     build: ./ircd
     restart: unless-stopped 
     env_file:
       - ircd.env 
-    container_name: ircd
     ports:
-      - "6667:6667"
+      - 6667:6667
+    container_name: ircd
     volumes:
       - tor:/var/lib/tor
+  tailscale:
+    image: tailscale/tailscale
+    container_name: tailscale
+    env_file:
+      - tailscale.env
+    environment:
+      - TS_TAILSCALED_EXTRA_ARGS=--tun=userspace-networking
+      - TS_STATE_DIR=/var/lib/tailscale
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    privileged: true
+    restart: unless-stopped
+    volumes:
+      - tailscale:/var/lib # State data will be stored in this directory
