@@ -24,7 +24,7 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 ### Dependencies 
 
 - [Docker-compose](https://docs.docker.com/compose/).
-- IRC client (e.g [weechat](https://weechat.org)
+- IRC client (e.g [weechat](https://weechat.org))
 - Tailscale
 
 ## Installation
@@ -32,7 +32,7 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 - Clone the project: `git clone https://odyslam/darkfi-starter`
 - `cd darkf-starter`
 - populate `tailscale.env` and `ircd.env` (see below)
-- Run `docker compose up`. When you close the termina, the setup will close as well. If you want to run it and put it in the background, execute `docker compose up -d`.
+- Run `docker compose up`. When you close the terminal, the setup will close as well. If you want to run it and put it in the background, execute `docker compose up -d`.
 - ✅
 
 ## Configuration
