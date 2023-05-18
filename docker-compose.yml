@@ -1,27 +1,37 @@
 version: '2.1'
 volumes:
-  darkfi:
   tor:
+  tailscale:
 services:
-  tor-node:
+  tor:
     image: odyslam/tor-darkfi
-    restart: always
-    depends_on:
-      - ircd
-      - taud
+    container_name: tor
+    restart: unless-stopped 
     volumes:
-      - tor:/etc/tor
+      - tor:/var/lib/tor
   ircd:
-    build: odyslam/ircd
-    restart: 'unless-stopped'
+    image: odyslam/ircd
+    restart: unless-stopped 
+    env_file:
+      - ircd.env 
     ports:
-      - "6667:6667"
+      - 6667:6667
+    container_name: ircd
     volumes:
-      - darkfi:/config
-  taud:
-    image: odyslam/taud
-    restart: 'unless-stopped'
-    ports:
-      - "23330:23330"
+      - tor:/var/lib/tor
+  tailscale:
+    image: tailscale/tailscale
+    container_name: tailscale
+    env_file:
+      - tailscale.env
+    environment:
+      - TS_TAILSCALED_EXTRA_ARGS=--tun=userspace-networking
+      - TS_STATE_DIR=/var/lib/tailscale
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    privileged: true
+    restart: unless-stopped
     volumes:
-      - darkfi:/config
+      - tailscale:/var/lib # State data will be stored in this directory
