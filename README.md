@@ -32,8 +32,10 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 - Clone the project: `git clone https://odyslam/darkfi-starter`
 - `cd darkf-starter`
 - populate `tailscale.env` and `ircd.env` (see below)
-- Run `docker compose up`
+- Run `docker compose up`. When you close the termina, the setup will close as well. If you want to run it and put it in the background, execute `docker compose up -d`.
 - ✅
+
+## Configuration
 
 ### Tailscale key
 
@@ -70,3 +72,14 @@ Replace `<joe>` or `<doe>` with the name of the contact. Replace the `<public_ke
 - Add the server to the client `/server add darkfi <IP>`
 - Connect `/connect darkfi`
 
+## Deploy the setup
+
+- Provision a linux server (e.g [Digital Ocean](https://www.digitalocean.com/pricing/droplets#basic-droplets)), install Docker and follow the instructions above
+- Get a Raspbery pi (or similar single-board computer), install Linux and follow the instructions above.
+- Get a Raspberry pi (or another server) (or similar single-board computer), flash balenaOS, and deploy it via [Balena](https://balena.io). This is the easiest way of all three, as with balena you also get remote device management out of the box (logs, remote terminal, etc.)
+
+[![balena deploy button](https://www.balena.io/deploy.svg)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/odyslam/darkfi-starter>)
+
+# License
+
+AGPLv3
