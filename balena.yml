@@ -1,0 +1,22 @@
+name: darkfiStarterPack
+type: sw.application
+description: >-
+  Participate and contribute to the DarkFi community
+assets:
+  repository:
+    type: blob.asset
+    data:
+      url: 'https://github.com/odyslam/darkfi-starter'
+  logo:
+    type: blob.asset
+    data:
+      url: >-
+        https://pbs.twimg.com/profile_images/1453121461565399040/0tn62gaL_400x400.jpg
+data:
+  applicationEnvironmentVariables:
+  defaultDeviceType: raspberry-pi4-64
+  supportedDeviceTypes:
+    - generic-aarch64
+    - generic-amd64
+    - generic
+version: 1
