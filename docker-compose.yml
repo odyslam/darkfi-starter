@@ -4,13 +4,13 @@ volumes:
   tailscale:
 services:
   tor:
-    build: ./tor
+    image: odyslam/tor-darkfi
     container_name: tor
     restart: unless-stopped 
     volumes:
       - tor:/var/lib/tor
   ircd:
-    build: ./ircd
+    image: odyslam/ircd
     restart: unless-stopped 
     env_file:
       - ircd.env 
