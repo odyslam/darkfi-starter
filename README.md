@@ -76,7 +76,7 @@ Replace `<joe>` or `<doe>` with the name of the contact. Replace the `<public_ke
 
 - Provision a linux server (e.g [Digital Ocean](https://www.digitalocean.com/pricing/droplets#basic-droplets)), install Docker and follow the instructions above
 - Get a Raspbery pi (or similar single-board computer), install Linux and follow the instructions above.
-- Get a Raspberry pi (or another server) (or similar single-board computer), flash balenaOS, and deploy it via [Balena](https://balena.io). This is the easiest way of all three, as with balena you also get remote device management out of the box (logs, remote terminal, etc.)
+- Get a Raspberry pi (or another server) (or similar single-board computer), flash balenaOS, and deploy it via [Balena](https://balena.io). This is the easiest way of all three, as with balena you also get remote device management out of the box (logs, remote terminal, etc.). If you use balena, instead of using the `.env` files, you will need to add the env variables via the platform as described in their [docs](https://docs.balena.io/learn/manage/variables/#:~:text=From%20the%20Device%20Summary%20page,button%20to%20add%20the%20variable).
 
 [![balena deploy button](https://www.balena.io/deploy.svg)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/odyslam/darkfi-starter>)
 
