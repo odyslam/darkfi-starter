@@ -19,6 +19,45 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 - `ircd` is configured to receives data as a **Tor hidden service** and is configured to participate to the network only by connecting to other `Tor` nodes. 
 - `tailscale` is used for the connection between user's IRC client and `ircd`. 
 
+```
+     ┌──────────┐          ┌────────────────┐          ┌───────────────────┐          ┌────┐              ┌─────────────┐             ┌───────────┐          ┌─────────┐
+     │irc_client│          │tailscale_server│          │tailscale_container│          │ircd│              │tor_container│             │tor_network│          │ircd_peer│
+     └────┬─────┘          └───────┬────────┘          └─────────┬─────────┘          └─┬──┘              └──────┬──────┘             └─────┬─────┘          └────┬────┘
+          │  Connect to container  │                             │                      │                        │                          │                     │     
+          │ ───────────────────────>                             │                      │                        │                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │    Connect to container     │                      │                        │                          │                     │     
+          │                        │ ───────────────────────────>│                      │                        │                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │ connect to IRC API   │                        │                          │                     │     
+          │                        │                             │─────────────────────>│                        │                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │    IRC server response      │                      │                        │                          │                     │     
+          │ <────────────────────────────────────────────────────────────────────────────                        │                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │ ask for inbound address│                          │                     │     
+          │                        │                             │                      │ ───────────────────────>                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │     inbound address    │                          │                     │     
+          │                        │                             │                      │ <───────────────────────                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │  connect to Tor peers  │                          │                     │     
+          │                        │                             │                      │ ───────────────────────>                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │                        │ advertise inbound address│                     │     
+          │                        │                             │                      │                        │ ─────────────────────────>                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │                        │   connect to tor peers   │                     │     
+          │                        │                             │                      │                        │ ─────────────────────────>                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │                        │  connect to TLS peers    │                     │     
+          │                        │                             │                      │ ────────────────────────────────────────────────────────────────────────>     
+     ┌────┴─────┐          ┌───────┴────────┐          ┌─────────┴─────────┐          ┌─┴──┐              ┌──────┴──────┐             ┌─────┴─────┐          ┌────┴────┐
+     │irc_client│          │tailscale_server│          │tailscale_container│          │ircd│              │tor_container│             │tor_network│          │ircd_peer│
+     └──────────┘          └────────────────┘          └───────────────────┘          └────┘              └─────────────┘             └───────────┘          └─────────┘
+
+```
+
 ## How to use
 
 ### Dependencies 
