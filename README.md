@@ -19,13 +19,52 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 - `ircd` is configured to receives data as a **Tor hidden service** and is configured to participate to the network only by connecting to other `Tor` nodes. 
 - `tailscale` is used for the connection between user's IRC client and `ircd`. 
 
+```
+     ┌──────────┐          ┌────────────────┐          ┌───────────────────┐          ┌────┐              ┌─────────────┐             ┌───────────┐          ┌─────────┐
+     │irc_client│          │tailscale_server│          │tailscale_container│          │ircd│              │tor_container│             │tor_network│          │ircd_peer│
+     └────┬─────┘          └───────┬────────┘          └─────────┬─────────┘          └─┬──┘              └──────┬──────┘             └─────┬─────┘          └────┬────┘
+          │  Connect to container  │                             │                      │                        │                          │                     │     
+          │ ───────────────────────>                             │                      │                        │                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │    Connect to container     │                      │                        │                          │                     │     
+          │                        │ ───────────────────────────>│                      │                        │                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │ connect to IRC API   │                        │                          │                     │     
+          │                        │                             │─────────────────────>│                        │                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │    IRC server response      │                      │                        │                          │                     │     
+          │ <────────────────────────────────────────────────────────────────────────────                        │                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │ ask for inbound address│                          │                     │     
+          │                        │                             │                      │ ───────────────────────>                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │     inbound address    │                          │                     │     
+          │                        │                             │                      │ <───────────────────────                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │  connect to Tor peers  │                          │                     │     
+          │                        │                             │                      │ ───────────────────────>                          │                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │                        │ advertise inbound address│                     │     
+          │                        │                             │                      │                        │ ─────────────────────────>                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │                        │   connect to tor peers   │                     │     
+          │                        │                             │                      │                        │ ─────────────────────────>                     │     
+          │                        │                             │                      │                        │                          │                     │     
+          │                        │                             │                      │                        │  connect to TLS peers    │                     │     
+          │                        │                             │                      │ ────────────────────────────────────────────────────────────────────────>     
+     ┌────┴─────┐          ┌───────┴────────┐          ┌─────────┴─────────┐          ┌─┴──┐              ┌──────┴──────┐             ┌─────┴─────┐          ┌────┴────┐
+     │irc_client│          │tailscale_server│          │tailscale_container│          │ircd│              │tor_container│             │tor_network│          │ircd_peer│
+     └──────────┘          └────────────────┘          └───────────────────┘          └────┘              └─────────────┘             └───────────┘          └─────────┘
+
+```
+
 ## How to use
 
 ### Dependencies 
 
 - [Docker-compose](https://docs.docker.com/compose/).
 - IRC client (e.g [weechat](https://weechat.org))
-- Tailscale
+- [Tailscale](https://tailscale.com)
 
 ## Installation
 
@@ -39,6 +78,8 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 
 ### Tailscale key
 
+[tailscale docs](https://tailscale.com/kb/1085/auth-keys/)
+
 - Create a tailscale account
 - Go to admin console and click on `Settings`
 - Click on `Keys` in Personal Settings
@@ -48,21 +89,35 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 ### Private key
 
 If `ircd` does not detect a private key, it will create a new private key for you and print the public key. Search for the following logs in the logs of the `ircd` service:
+
 ```
 ircd  | Private key: ********
 ircd  | Public key: Df3p14VZYSr7aHRJjH3sGWLqhqN3PGjxqGvBLhNbFRqF
 ircd  | Adding the private key to ircd config...
 ```
+
 If you already have a private key, duplicate `ircd.env.example` and replace `<private_key>` with the private key. If containers are already running, you will need to restart them (`docker compose restart`).
 
 ### Add contacts
 
+[ircd docs](https://darkrenaissance.github.io/darkfi/misc/ircd/specification.html#contactinfo)
+
 To add a new contact, add the following env variable to `ircd.env` for every contact:
 ```
-CONTACT_<joe>=<public_key>
-CONTACT_<doe>=<public_key>
+IRCD_CONTACT_<joe>=<public_key>
+IRCD_CONTACT_<doe>=<public_key>
 ```
-Replace `<joe>` or `<doe>` with the name of the contact. Replace the `<public_key>` with the  public key of the contact
+Replace `<joe>` or `<doe>` with the name of the contact. Replace the `<public_key>` with the  public key of the contact.
+
+### Add channels 
+
+[ircd docs](https://darkrenaissance.github.io/darkfi/misc/ircd/specification.html#channelinfo)
+
+To add a new channel, add the following env variable to `ircd.env` for every channel:
+```
+IRCD_CONTACT_<channel>=<secret>
+```
+Replace `<channel>` with the channel name (e.g `devteam`) and `<secret>` with the channel's secret.
 
 ## Connect your IRC client
 

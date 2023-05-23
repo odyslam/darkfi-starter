@@ -19,4 +19,4 @@ data:
     - generic-aarch64
     - generic-amd64
     - generic
-version: 1
+version: 1.0.2
