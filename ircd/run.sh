@@ -14,6 +14,20 @@ contact_pubkey=\"${value}\""
   done
 }
 
+update_private_channels() {
+  env | while IFS='=' read -r name value ; do
+    if [[ $name == 'IRCD_CHANNEL_'* ]]; then
+      channel="${name#IRCD_CHANNEL_}"
+      echo "Adding channel: ${channel} : ${value}"
+      CONFIG_VAL="
+[channel.\"#${channel}\"]
+secret=\"${value}\""
+      echo "${CONFIG_VAL}" >> /root/.config/darkfi/ircd_config.toml
+    fi
+  done
+
+}
+
 setup_tor_hostname() {
   while [ ! -f /var/lib/tor/ircd/hostname ]
   do
@@ -21,6 +35,7 @@ setup_tor_hostname() {
     sleep 15 # or less like 0.2
   done
   EXTERNAL_ADDR="tor://$(cat /var/lib/tor/ircd/hostname):25551"
+  export EXTERNAL_ADDR
   echo "Tor address for ircd: ${EXTERNAL_ADDR}"
 }
 
@@ -32,6 +47,7 @@ setup_private_key() {
     echo "Detected private key in env"
   fi
   PUBLIC_KEY="$(ircd --recover-pubkey ${PRIVATE_KEY} | awk '{print $NF}')"
+  export PUBLIC_KEY
   echo "Private key: **********"
   echo "Public key : ${PUBLIC_KEY}"
   echo "Private key added to config"
@@ -47,7 +63,8 @@ wait_for_tor(){
 }
 setup_tor_socks_proxy() {
   IP="socks5://$(getent hosts tor | cut -d' ' -f1):9050"
-  export "DARKFI_TOR_SOCKS5_URL=${IP}"
+  DARKFI_TOR_SOCKS5_URL=${IP}
+  export DARKFI_TOR_SOCKS5_URL
   echo "Using Tor at: ${IP}"
 }
 
@@ -55,6 +72,7 @@ wait_for_tor
 setup_tor_hostname
 setup_tor_socks_proxy
 setup_private_key
+update_private_channels
 update_contacts
 echo "Starting ircd..."
 exec ircd --external-addr "${EXTERNAL_ADDR}"
