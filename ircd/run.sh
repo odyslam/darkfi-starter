@@ -29,11 +29,6 @@ secret=\"${value}\""
 }
 
 setup_tor_hostname() {
-  while [ ! -f /var/lib/tor/ircd/hostname ]
-  do
-    echo "Waiting for Tor to start..."
-    sleep 15 # or less like 0.2
-  done
   EXTERNAL_ADDR="tor://$(cat /var/lib/tor/ircd/hostname):25551"
   export EXTERNAL_ADDR
   echo "Tor address for ircd: ${EXTERNAL_ADDR}"
