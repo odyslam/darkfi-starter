@@ -45,7 +45,7 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
           │                        │                             │                      │ ───────────────────────>                          │                     │     
           │                        │                             │                      │                        │                          │                     │     
           │                        │                             │                      │                        │ advertise inbound address│                     │     
-          │                        │                             │                      │                        │ ─────────────────────────>                     │     
+          │                        │                             │                      │                        │ 
           │                        │                             │                      │                        │                          │                     │     
           │                        │                             │                      │                        │   connect to tor peers   │                     │     
           │                        │                             │                      │                        │ ─────────────────────────>                     │     
@@ -76,7 +76,9 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 
 ## Configuration
 
-### Tailscale key
+### Tailscale
+
+#### API Key
 
 [tailscale docs](https://tailscale.com/kb/1085/auth-keys/)
 
@@ -86,7 +88,9 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 - Generate an Auth key, use default settings
 - Duplicate `tailscale.env.example`, rename it to `tailscale.env` and replace <auth_key> with the auth key you just copied
 
-### Private key
+### IRCD
+
+#### Private key
 
 If `ircd` does not detect a private key, it will create a new private key for you and print the public key. Search for the following logs in the logs of the `ircd` service:
 
@@ -98,7 +102,7 @@ ircd  | Adding the private key to ircd config...
 
 If you already have a private key, duplicate `ircd.env.example` and replace `<private_key>` with the private key. If containers are already running, you will need to restart them (`docker compose restart`).
 
-### Add contacts
+#### Add contacts
 
 [ircd docs](https://darkrenaissance.github.io/darkfi/misc/ircd/specification.html#contactinfo)
 
@@ -109,7 +113,7 @@ IRCD_CONTACT_<doe>=<public_key>
 ```
 Replace `<joe>` or `<doe>` with the name of the contact. Replace the `<public_key>` with the  public key of the contact.
 
-### Add channels 
+#### Add channels 
 
 [ircd docs](https://darkrenaissance.github.io/darkfi/misc/ircd/specification.html#channelinfo)
 
@@ -119,13 +123,30 @@ IRCD_CONTACT_<channel>=<secret>
 ```
 Replace `<channel>` with the channel name (e.g `devteam`) and `<secret>` with the channel's secret.
 
-## Connect your IRC client
+### Connect your IRC client
 
 - Make sure that the containers are running
 - Open weechat (or any other client)
 - Get the IP of the tailscale client that is running in the container. It should be named `docker` something.
 - Add the server to the client `/server add darkfi <IP>`
 - Connect `/connect darkfi`
+
+## TAUD
+
+#### Add workspaces
+
+To add a new workspace, add the following env variable to `taud.env`:
+```
+WORKSPACE_<WORKSPACE_NAME>=<private_key>
+```
+
+#### Add nickname
+To customise your nickname, add the following env variable to `taud.env`:
+```
+NICK=<nickname>
+```
+
+**Note**: If you don't assign a nickname, a random one will be automatically assigned.
 
 ## Deploy the setup
 
