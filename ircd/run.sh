@@ -63,11 +63,14 @@ setup_tor_socks_proxy() {
   echo "Using Tor at: ${IP}"
 }
 
+echo "             ircd"
+echo ==================================
 wait_for_tor
 setup_tor_hostname
 setup_tor_socks_proxy
 setup_private_key
 update_private_channels
 update_contacts
-echo "Starting ircd..."
+echo "ircd configured. Starting..."
+echo ==================================
 exec ircd --external-addr "${EXTERNAL_ADDR}"
