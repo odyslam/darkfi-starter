@@ -11,9 +11,11 @@ wait_for_tor(){
 }
 
 setup_tor_hostname() {
-  EXTERNAL_ADDR="tor://$(cat /var/lib/tor/taud/hostname):25551"
+  EXTERNAL_ADDR="tor+tls://$(cat /var/lib/tor/taud/hostname):25551"
   export EXTERNAL_ADDR
   echo "Tor address for taud: ${EXTERNAL_ADDR}"
+  echo "external_addrs = [\"${EXTERNAL_ADDR}\"]" >> /root/.config/darkfi/taud_config.toml
+  
 }
 
 setup_tor_socks_proxy() {
@@ -24,18 +26,31 @@ setup_tor_socks_proxy() {
 }
 
 update_workspaces() {
-  env | while IFS='=' read -r name key ; do
+  while IFS='=' read -r name key; do
     if [[ $name == 'WORKSPACE_'* ]]; then
       workspace="${name#WORKSPACE_}"
       echo "Adding workspace: ${workspace} : ${key}"
-      WORKSPACES="${WORKSPACES} --workspaces ${workspace}:${key}"
+      WORKSPACES="\"${workspace}:${key}\","
     fi
-  done
+  done < <(env)
+  sed -i "1s/^/workspaces=[${WORKSPACES%?}]\n/" /root/.config/darkfi/taud_config.toml
 }
 
+update_nickname() {
+  if [ -z "${NICK}" ]; then
+    NICK="darkfi-$RANDOM"
+    echo "No nickname set, using default: ${NICK}"
+  fi
+  echo "Using nickname: ${NICK}"
+  sed -i "1s/^/nickname=\"${NICK}\"\n/" /root/.config/darkfi/taud_config.toml
+}
+echo "             taud"
+echo ==================================
 wait_for_tor
 setup_tor_hostname
 setup_tor_socks_proxy
 update_workspaces
-echo "Starting taud..."
-exec taud --external-addr "${EXTERNAL_ADDR}"
+update_nickname
+echo "taud configured. Starting..."
+echo ==================================
+exec taud 

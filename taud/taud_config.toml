@@ -8,7 +8,6 @@ rpc_listen = "tcp://0.0.0.0:23330"
 ## current display name
 # nickname="nickname"
 
-
 # p2p network settings
 [net]
 ## p2p accept addresses
@@ -28,9 +27,9 @@ outbound_connections = 8
 seeds = ["tcp+tls://alpinewg.parazyd.org:5362"]
 
 # whitelisted transports for outbound connections
-allowed_transports = ["tor+tls"]
+allowed_transports = ["tor+tls", "tcp+tls"]
 
 # enable transport mixing
 # allows mixing transports, e.g. tor+tls:// connecting to tcp+tls://
 # by default this is not allowed.
-transport_mixing = true
+transport_mixing = false

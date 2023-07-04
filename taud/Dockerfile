@@ -6,7 +6,7 @@ RUN git clone https://github.com/darkrenaissance/darkfi && pip3 install cargo-zi
 WORKDIR ./darkfi
 RUN if [ "${TARGETPLATFORM}" = "linux/amd64" ] ; then CARGO_BUILD_TARGET=x86_64-unknown-linux-musl ; \ 
     elif [ "${TARGETPLATFORM}" = "linux/arm64" ] ; then CARGO_BUILD_TARGET=aarch64-unknown-linux-musl ; fi && \
-    rustup target add "${CARGO_BUILD_TARGET}" && \
+    rustup default nightly && rustup target add "${CARGO_BUILD_TARGET}" && \
     cargo update && cargo +nightly zigbuild --target ${CARGO_BUILD_TARGET} --all-features --release --package taud  && \
     cp /darkfi/target/"${CARGO_BUILD_TARGET}"/release/taud /darkfi/taud
 
