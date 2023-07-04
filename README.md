@@ -16,8 +16,8 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 
 [Tor](https://www.torproject.org/) and [Tailscale](https://tailscale.com) is used for networking.
 
-- `ircd` is configured to receives data as a **Tor hidden service** and is configured to participate to the network only by connecting to other `Tor` nodes. 
-- `tailscale` is used for the connection between user's IRC client and `ircd`. 
+- `ircd` and `taud` are configured to receives data as **Tor hidden services**.
+- `tailscale` is used for the connection between the user's device and the server. This is used so that the user can connect their IRC client or `tau` client from anywhere with ease.
 
 ```
      ┌──────────┐          ┌────────────────┐          ┌───────────────────┐          ┌────┐              ┌─────────────┐             ┌───────────┐          ┌─────────┐
