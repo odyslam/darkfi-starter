@@ -4,7 +4,7 @@ volumes:
   tailscale:
 services:
   tor:
-    image: odyslam/tor-darkfi
+    build: ./tor
     container_name: tor
     restart: unless-stopped 
     volumes:
@@ -17,6 +17,16 @@ services:
     ports:
       - 6667:6667
     container_name: ircd
+    volumes:
+      - tor:/var/lib/tor
+  taud:
+    build: ./taud
+    restart: unless-stopped 
+    env_file:
+      - taud.env 
+    ports:
+      - 23330:23330
+    container_name: taud
     volumes:
       - tor:/var/lib/tor
   tailscale:
