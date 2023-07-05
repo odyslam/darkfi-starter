@@ -44,13 +44,9 @@ update_nickname() {
   echo "Using nickname: ${NICK}"
   sed -i "1s/^/nickname=\"${NICK}\"\n/" /root/.config/darkfi/taud_config.toml
 }
-echo "             taud"
-echo ==================================
-wait_for_tor
-setup_tor_hostname
-setup_tor_socks_proxy
-update_workspaces
-update_nickname
-echo "taud configured. Starting..."
-echo ==================================
+title="             taud"
+section="=================================="
+output=$(wait_for_tor && setup_tor_hostname && setup_tor_socks_proxy && update_workspaces && update_nickname)
+msg="taud configured. Starting..."
+echo "${title}\ns${section}\n${outputotput}\n${msg}\n${section}"
 exec taud 
