@@ -20,7 +20,7 @@ services:
     volumes:
       - tor:/var/lib/tor
   taud:
-    build: ./taud
+    image: odyslam/taud
     restart: unless-stopped 
     env_file:
       - taud.env 
