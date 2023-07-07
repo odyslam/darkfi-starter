@@ -10,7 +10,7 @@ services:
     volumes:
       - tor:/var/lib/tor
   ircd:
-    image: odyslam/ircd
+    build: ./ircd
     restart: unless-stopped 
     env_file:
       - ircd.env 

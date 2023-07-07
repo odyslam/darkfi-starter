@@ -16,8 +16,8 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 
 [Tor](https://www.torproject.org/) and [Tailscale](https://tailscale.com) is used for networking.
 
-- `ircd` is configured to receives data as a **Tor hidden service** and is configured to participate to the network only by connecting to other `Tor` nodes. 
-- `tailscale` is used for the connection between user's IRC client and `ircd`. 
+- `ircd` and `taud` are configured to be exposed to the internet as **Tor hidden services**
+- `tailscale` is used for the connection between the user's device and the server. This is used so that the user can connect their IRC client or `tau` client from anywhere with ease
 
 ```
      ┌──────────┐          ┌────────────────┐          ┌───────────────────┐          ┌────┐              ┌─────────────┐             ┌───────────┐          ┌─────────┐
@@ -45,7 +45,7 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
           │                        │                             │                      │ ───────────────────────>                          │                     │     
           │                        │                             │                      │                        │                          │                     │     
           │                        │                             │                      │                        │ advertise inbound address│                     │     
-          │                        │                             │                      │                        │ ─────────────────────────>                     │     
+          │                        │                             │                      │                        │ 
           │                        │                             │                      │                        │                          │                     │     
           │                        │                             │                      │                        │   connect to tor peers   │                     │     
           │                        │                             │                      │                        │ ─────────────────────────>                     │     
@@ -58,6 +58,12 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 
 ```
 
+#### Open Ports
+
+This setup exposes the following container ports to the host machine:
+- **ircd**: port `6667` for the irc client to connect
+- **taud**: port `23330` for the `tau` client to connect
+
 ## How to use
 
 ### Dependencies 
@@ -69,14 +75,19 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 ## Installation
 
 - Clone the project: `git clone https://odyslam/darkfi-starter`
-- `cd darkf-starter`
-- populate `tailscale.env` and `ircd.env` (see below)
-- Run `docker compose up`. When you close the terminal, the setup will close as well. If you want to run it and put it in the background, execute `docker compose up -d`.
+- Enter the directory with `cd darkf-starter`
+- Create and populate the `.env` files with the appropriate env variables
+     - `ircd.env` 
+     - `taud.env`
+     - `taiscale.env`
+- Run `docker compose up` (add the flag `-d` if you want it to run in the background)
 - ✅
 
 ## Configuration
 
-### Tailscale key
+### Tailscale
+
+#### API Key
 
 [tailscale docs](https://tailscale.com/kb/1085/auth-keys/)
 
@@ -86,7 +97,9 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 - Generate an Auth key, use default settings
 - Duplicate `tailscale.env.example`, rename it to `tailscale.env` and replace <auth_key> with the auth key you just copied
 
-### Private key
+### IRCD
+
+#### Private key
 
 If `ircd` does not detect a private key, it will create a new private key for you and print the public key. Search for the following logs in the logs of the `ircd` service:
 
@@ -98,7 +111,7 @@ ircd  | Adding the private key to ircd config...
 
 If you already have a private key, duplicate `ircd.env.example` and replace `<private_key>` with the private key. If containers are already running, you will need to restart them (`docker compose restart`).
 
-### Add contacts
+#### Add contacts
 
 [ircd docs](https://darkrenaissance.github.io/darkfi/misc/ircd/specification.html#contactinfo)
 
@@ -109,7 +122,7 @@ IRCD_CONTACT_<doe>=<public_key>
 ```
 Replace `<joe>` or `<doe>` with the name of the contact. Replace the `<public_key>` with the  public key of the contact.
 
-### Add channels 
+#### Add channels 
 
 [ircd docs](https://darkrenaissance.github.io/darkfi/misc/ircd/specification.html#channelinfo)
 
@@ -119,13 +132,40 @@ IRCD_CONTACT_<channel>=<secret>
 ```
 Replace `<channel>` with the channel name (e.g `devteam`) and `<secret>` with the channel's secret.
 
-## Connect your IRC client
+### Connect your IRC client
 
 - Make sure that the containers are running
 - Open weechat (or any other client)
 - Get the IP of the tailscale client that is running in the container. It should be named `docker` something.
 - Add the server to the client `/server add darkfi <IP>`
 - Connect `/connect darkfi`
+
+## TAUD
+
+Taud is a p2p task manager and issue tracker.
+
+#### Add workspaces
+
+To add a new workspace, add the following env variable to `taud.env`:
+```
+TAUD_WORKSPACE_<WORKSPACE_NAME>=<private_key>
+```
+
+#### Add nickname
+To customise your nickname, add the following env variable to `taud.env`:
+```
+TAUD_NICK=<nickname>
+```
+
+**Note**: If you don't assign a nickname, a random one will be automatically assigned.
+
+## Docker compose flavors
+
+The docker compose files come in different flavours, each with different trust assumptions:
+
+- `docker-compose.yaml`: The default and easiest setup. It uses my own images `odyslam/*` so that you don't have to build them. You trust that the images are not malicious.
+- `docker-compose-build.yaml`: The same setup as the above, but the images are built when you run `docker compose up` or `balena push`. Much slower, but you are certain of what docker images  you will run.
+- `docker-compose-no-tailscale.yaml`: You build the images and you **don't** want to use tailscale. It's up to you to take care of networking and remote access to the machine that runs the services. It's worth mentioning that tailscale container, due to it's nature, does require the `privileged` setting, so it's attack surface is larger than the rest of the containers.
 
 ## Deploy the setup
 

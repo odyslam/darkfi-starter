@@ -1,0 +1,33 @@
+## json-rpc listen url
+rpc_listen = "tcp://0.0.0.0:23330"
+
+## sets datastore path
+#datastore="~/.tau"
+
+## current display name
+# nickname="nickname"
+
+# p2p network settings
+[net]
+## p2p accept addresses
+inbound = ["tcp+tls://0.0.0.0:23331"]
+
+## connection slots
+outbound_connections = 8
+
+## addresses we want to advertise to peers
+## these should be reachable externally
+#external_addrs = ["tcp+tls://127.0.0.1:23331"]
+
+## specific peers to connect to
+#peers = ["tcp+tls://127.0.0.1:23331"]
+
+## seed nodes to connect to
+seeds = ["tcp+tls://alpinewg.parazyd.org:5362"]
+
+allowed_transports = ["tor+tls", "tcp+tls"]
+
+# enable transport mixing
+# allows mixing transports, e.g. tor+tls:// connecting to tcp+tls://
+# by default this is not allowed.
+transport_mixing = true

@@ -29,11 +29,6 @@ secret=\"${value}\""
 }
 
 setup_tor_hostname() {
-  while [ ! -f /var/lib/tor/ircd/hostname ]
-  do
-    echo "Waiting for Tor to start..."
-    sleep 15 # or less like 0.2
-  done
   EXTERNAL_ADDR="tor://$(cat /var/lib/tor/ircd/hostname):25551"
   export EXTERNAL_ADDR
   echo "Tor address for ircd: ${EXTERNAL_ADDR}"
@@ -68,11 +63,9 @@ setup_tor_socks_proxy() {
   echo "Using Tor at: ${IP}"
 }
 
-wait_for_tor
-setup_tor_hostname
-setup_tor_socks_proxy
-setup_private_key
-update_private_channels
-update_contacts
-echo "Starting ircd..."
+title="             ircd"
+section="=================================="
+output=$(wait_for_tor && setup_tor_hostname && setup_tor_socks_proxy && setup_private_key && update_private_channels && update_contacts)
+msg="ircd configured. Starting..."
+echo "${title}\ns${section}\n${output}\n${msg}\n${section}"
 exec ircd --external-addr "${EXTERNAL_ADDR}"
