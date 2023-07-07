@@ -1,4 +1,3 @@
-
 ## json-rpc listen url
 rpc_listen = "tcp://0.0.0.0:23330"
 
@@ -26,10 +25,9 @@ outbound_connections = 8
 ## seed nodes to connect to
 seeds = ["tcp+tls://alpinewg.parazyd.org:5362"]
 
-# whitelisted transports for outbound connections
 allowed_transports = ["tor+tls", "tcp+tls"]
 
 # enable transport mixing
 # allows mixing transports, e.g. tor+tls:// connecting to tcp+tls://
 # by default this is not allowed.
-transport_mixing = false
+transport_mixing = true
