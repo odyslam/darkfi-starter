@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-WORKSPACES=""
+TAUD_WORKSPACES=""
 wait_for_tor(){
   while [ ! -f /var/lib/tor/taud/hostname ] 
     do
@@ -27,26 +27,27 @@ setup_tor_socks_proxy() {
 
 update_workspaces() {
   while IFS='=' read -r name key; do
-    if [[ $name == 'WORKSPACE_'* ]]; then
-      workspace="${name#WORKSPACE_}"
+    if [[ $name == 'TAUD_WORKSPACE_'* ]]; then
+      workspace="${name#TAUD_WORKSPACE_}"
       echo "Adding workspace: ${workspace} : ${key}"
-      WORKSPACES="\"${workspace}:${key}\","
+      TAUD_WORKSPACES="\"${workspace}:${key}\","
     fi
   done < <(env)
-  sed -i "1s/^/workspaces=[${WORKSPACES%?}]\n/" /root/.config/darkfi/taud_config.toml
+  sed -i "1s/^/workspaces=[${TAUD_WORKSPACES%?}]\n/" /root/.config/darkfi/taud_config.toml
 }
 
 update_nickname() {
-  if [ -z "${NICK}" ]; then
-    NICK="darkfi-$RANDOM"
-    echo "No nickname set, using default: ${NICK}"
+  if [ -z "${TAUD_NICKNAME}" ]; then
+    TAUD_NICKNAME="darkfi-$RANDOM"
+    echo "No nickname set, using default: ${TAUD_NICKNAME}"
   fi
-  echo "Using nickname: ${NICK}"
-  sed -i "1s/^/nickname=\"${NICK}\"\n/" /root/.config/darkfi/taud_config.toml
+  echo "Using nickname: ${TAUD_NICKNAME}"
+  sed -i "1s/^/nickname=\"${TAUD_NICKNAME}\"\n/" /root/.config/darkfi/taud_config.toml
 }
 title="             taud"
 section="=================================="
 output=$(wait_for_tor && setup_tor_hostname && setup_tor_socks_proxy && update_workspaces && update_nickname)
+
 msg="taud configured. Starting..."
-echo "${title}\ns${section}\n${outputotput}\n${msg}\n${section}"
+printf "%s\n%s\n%s\n%s\n%s\n" "${title}" "${section}" "${output}" "${msg}" "${section}"
 exec taud 
