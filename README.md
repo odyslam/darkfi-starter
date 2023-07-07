@@ -16,8 +16,8 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
 
 [Tor](https://www.torproject.org/) and [Tailscale](https://tailscale.com) is used for networking.
 
-- `ircd` and `taud` are configured to receives data as **Tor hidden services**.
-- `tailscale` is used for the connection between the user's device and the server. This is used so that the user can connect their IRC client or `tau` client from anywhere with ease.
+- `ircd` and `taud` are configured to be exposed to the internet as **Tor hidden services**
+- `tailscale` is used for the connection between the user's device and the server. This is used so that the user can connect their IRC client or `tau` client from anywhere with ease
 
 ```
      ┌──────────┐          ┌────────────────┐          ┌───────────────────┐          ┌────┐              ┌─────────────┐             ┌───────────┐          ┌─────────┐
@@ -57,6 +57,12 @@ The goal of this setup is to provide an simple `docker-compose.yml` that by runn
      └──────────┘          └────────────────┘          └───────────────────┘          └────┘              └─────────────┘             └───────────┘          └─────────┘
 
 ```
+
+#### Open Ports
+
+This setup exposes the following container ports to the host machine:
+- **ircd**: port `6667` for the irc client to connect
+- **taud**: port `23330` for the `tau` client to connect
 
 ## How to use
 
@@ -136,20 +142,30 @@ Replace `<channel>` with the channel name (e.g `devteam`) and `<secret>` with th
 
 ## TAUD
 
+Taud is a p2p task manager and issue tracker.
+
 #### Add workspaces
 
 To add a new workspace, add the following env variable to `taud.env`:
 ```
-WORKSPACE_<WORKSPACE_NAME>=<private_key>
+TAUD_WORKSPACE_<WORKSPACE_NAME>=<private_key>
 ```
 
 #### Add nickname
 To customise your nickname, add the following env variable to `taud.env`:
 ```
-NICK=<nickname>
+TAUD_NICK=<nickname>
 ```
 
 **Note**: If you don't assign a nickname, a random one will be automatically assigned.
+
+## Docker compose flavors
+
+The docker compose files come in different flavours, each with different trust assumptions:
+
+- `docker-compose.yaml`: The default and easiest setup. It uses my own images `odyslam/*` so that you don't have to build them. You trust that the images are not malicious.
+- `docker-compose-build.yaml`: The same setup as the above, but the images are built when you run `docker compose up` or `balena push`. Much slower, but you are certain of what docker images  you will run.
+- `docker-compose-no-tailscale.yaml`: You build the images and you **don't** want to use tailscale. It's up to you to take care of networking and remote access to the machine that runs the services. It's worth mentioning that tailscale container, due to it's nature, does require the `privileged` setting, so it's attack surface is larger than the rest of the containers.
 
 ## Deploy the setup
 
